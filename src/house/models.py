@@ -22,10 +22,13 @@ class House(models.Model):
     image = models.ImageField(upload_to=house_image_path,blank=True, null=True)
     created_on = models.DateTimeField(auto_now_add=True)
     description = models.TextField()
-    manage = models.OneToOneField('users.Profile', on_delete=models.SET_NULL, blank=True, null=True, related_name='managed_house')
+    manager = models.OneToOneField('users.Profile', on_delete=models.SET_NULL, blank=True, null=True, related_name='managed_house')
     points = models.IntegerField(default=0)
     completed_task_count = models.IntegerField(default=0)
     not_completed_task_count =  models.IntegerField(default=0)
+
+    def  __str__(self):
+        return f'{self.id} | {self.name}'
 
 
 # Create your models here.
