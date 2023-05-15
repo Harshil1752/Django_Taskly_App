@@ -4,13 +4,14 @@ from .serializers import HouseSerializer
 from .permissions import IsHouseManagerOrNot
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from django.contrib.auth.models import User
 
 class HouseViewSet(viewsets.ModelViewSet):
     queryset = House.objects.all()
     permission_classes = [IsHouseManagerOrNot,]
     serializer_class = HouseSerializer
 
-    @action(detail=True, methods=['POST'], name = 'Join')
+    @action(detail=True, methods=['POST'], name = 'Join', permission_classes=[])
     def join(self, request, pk=None):
         try:
             house = self.get_object()
@@ -26,7 +27,7 @@ class HouseViewSet(viewsets.ModelViewSet):
         except Exception as e:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    @action(detail=True, methods=['POST'], name = 'Leave')    
+    @action(detail=True, methods=['POST'], name = 'Leave', permission_classes=[])    
     def leave(self, request, pk=None):
         try:
             house = self.get_object()
@@ -39,6 +40,27 @@ class HouseViewSet(viewsets.ModelViewSet):
                 return Response({'detail': 'User not a member in this house.'}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @action(detail=True, methods=['POST'], name = 'Remove Member')    
+    def remove_member(self, request, pk=None):
+        try:
+            house = self.get_object()
+            user_id = request.data.get('user_id', None)
+            if(user_id == None):
+                return Response({'user_id': 'Not Provided'}, status= status.HTTP_400_BAD_REQUEST)
+            user_profile = User.objects.get(pk = user_id).profile
+            house_members = house.members
+            if(user_profile in house.members.all()):
+                house_members.remove(user_profile)
+                house.save()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            else:
+                return Response({'detail': 'User not a member in this house.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        except User.DoesNotExist as e:
+            return Response({'detail': 'Provided user_id does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 
 
