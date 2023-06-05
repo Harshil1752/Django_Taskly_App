@@ -6,10 +6,11 @@ class TaskListSerializer(serializers.ModelSerializer):
 
     house = serializers.HyperlinkedRelatedField(queryset = House.objects.all(), many = False, view_name='house-detail')
     created_by = serializers.HyperlinkedRelatedField(read_only = True, many = False, view_name='profile-detail')
+    tasks = serializers.HyperlinkedRelatedField(read_only = True, many = True, view_name='task-detail')
 
     class Meta:
         model = TaskList
-        fields = ['url', 'id', 'name', 'description', 'status', 'created_on', 'created_by', 'house']
+        fields = ['url', 'id', 'name', 'description', 'status', 'created_on', 'created_by', 'house', 'tasks']
         read_only_fields = ['created_on', 'status']
     
 
@@ -18,17 +19,18 @@ class TaskSerializer(serializers.ModelSerializer):
     created_by = serializers.HyperlinkedRelatedField(read_only = True, many = False, view_name='profile-detail')
     completed_by = serializers.HyperlinkedRelatedField(read_only = True, many = False, view_name='profile-detail')
     task_list = serializers.HyperlinkedRelatedField(queryset = TaskList.objects.all(), many=False, view_name='tasklist-detail')
+    attachments = serializers.HyperlinkedRelatedField(read_only = True, many = True, view_name='attachment-detail')
 
 
     class Meta:
         model = Task
-        fields = ['urls', 'id', 'name', 'description', 'status', 'created_on', 'completed_on', 'created_by',
-                  'completed_by', 'task_list']
-        read_only_fields = ['created_on', 'created_by', 'completed_on', 'completed_on']
+        fields = ['url', 'id', 'name', 'description', 'status', 'created_on', 'completed_on', 'created_by',
+                  'completed_by', 'task_list', 'attachments']
+        read_only_fields = ['created_on', 'created_by', 'completed_on', 'completed_by']
 
 class AttachmentSerializer(serializers.ModelSerializer):
 
-    task = serializers.HyperlinkedRelatedField(queryset = Task.objects.all(), many = False, view_name='task_detail')
+    task = serializers.HyperlinkedRelatedField(queryset = Task.objects.all(), many = False, view_name='task-detail')
 
     class Meta:
         model = Attachment

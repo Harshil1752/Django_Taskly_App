@@ -11,7 +11,7 @@ class TaskAdmin(admin.ModelAdmin):
 class AttachmentAdmin(admin.ModelAdmin):
     readonly_fields = ('id', 'created_on')
 
-admin.site.register(TaskList, TaskAdmin)
+admin.site.register(TaskList, TaskListAdmin)
 admin.site.register(Task, TaskAdmin)
 admin.site.register(Attachment, AttachmentAdmin)
 # Register your models here.
